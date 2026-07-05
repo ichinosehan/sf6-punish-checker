@@ -1,3 +1,6 @@
 node_modules/
 dist/
 .claude/
+__pycache__/
+# 公式サイトのフレーム表HTMLキャッシュ（技名抽出用。必要時に再取得する）
+data/raw/official/

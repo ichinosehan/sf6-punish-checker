@@ -75,9 +75,18 @@ py scripts/fetch_framedata.py --local
 
 ## 技名の日本語表記について
 
-- 通常技（立ち弱P等）は自動変換
-- 必殺技・SA等は `scripts/ja_names.json` のマッピングで全技を日本語化しています
-- 一部は公式日本語名が確認できないためベストエフォートの訳です。訳を直したい場合は
+- 通常技（立ち弱P等）は自動変換。公式サイトのニックネーム（例: 立ち強P（正拳突き））も付与しています
+- 必殺技・SA・特殊技は `scripts/ja_names.json` のマッピングで全技を日本語化しています
+- 技名は[SF6公式サイトのフレーム表](https://www.streetfighter.com/6/ja-jp/character/ryu/frame)から
+  引用しています。`scripts/build_official_ja.py` が公式ページをコマンド照合して
+  `ja_names.json`（ベース訳・ニックネーム）を更新します:
+
+  ```
+  py scripts/build_official_ja.py       # 公式から技名・ニックネームを取得してマージ
+  py scripts/fetch_framedata.py --local # framedata.json を再生成
+  ```
+
+- コマンドが衝突して自動照合できない一部の技はベストエフォートの訳です。訳を直したい場合は
   `scripts/ja_names.json` を編集して `py scripts/fetch_framedata.py --local` を実行してください
 
 ## ファイル構成

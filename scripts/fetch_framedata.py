@@ -89,6 +89,11 @@ def translate(char, name, ja):
     if m:
         pos, btn, sfx = m.groups()
         base = POS_JA[pos] + BTN_JA[btn]
+        # 公式サイトの通常技ニックネーム（例: 立ち強P（正拳突き））を付与。
+        nickmap = ja.get("nicknames", {}).get(char, {})
+        nick = nickmap.get(POS_JA[pos] + BTN_JA[btn]) or nickmap.get("ジャンプ" + BTN_JA[btn])
+        if nick:
+            base += "（" + nick + "）"
         if sfx:
             base += "（" + ja["suffixes"].get(sfx, sfx) + "）"
         return base
