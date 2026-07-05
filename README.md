@@ -3,8 +3,6 @@
 ストリートファイター6 全30キャラクターのフレームデータ一覧と、
 「相手のこの技をガードしたら、自キャラのどの技で確定反撃が取れるか」を調べられる静的Webアプリです。
 
-**公開URL: https://ichinosehan.github.io/sf6-punish-checker/**（`main`へのpushで自動更新されます）
-
 React + Vite + framer-motion製です。開発サーバを起動して使います（Node.js 18以上が必要）。
 
 **[start-app.bat](start-app.bat) をダブルクリックするだけでOKです。** 初回は依存パッケージのインストールも自動で行い、サーバー起動後にブラウザで http://localhost:5173 を自動で開きます。終了する時は開いたコンソールウィンドウを閉じるか `Ctrl+C` を押してください。
