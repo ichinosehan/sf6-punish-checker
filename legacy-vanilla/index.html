@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SF6 フレームデータ &amp; 確定反撃チェッカー</title>
+<link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+<header>
+  <h1>SF6 フレームデータ <span class="accent">&amp;</span> 確定反撃チェッカー</h1>
+  <nav id="tabs">
+    <button class="tab" data-tab="frames">フレーム一覧</button>
+    <button class="tab active" data-tab="punish">確定反撃</button>
+  </nav>
+</header>
+
+<main>
+  <!-- フレーム一覧 -->
+  <section id="view-frames" class="view" hidden>
+    <div class="controls">
+      <label>キャラクター
+        <select id="fd-char"></select>
+      </label>
+      <input type="search" id="fd-search" placeholder="技名・コマンドで検索">
+      <div id="fd-cats" class="chips"></div>
+    </div>
+    <div id="fd-stats" class="stats"></div>
+    <div class="table-wrap">
+      <table id="fd-table">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 確定反撃 -->
+  <section id="view-punish" class="view">
+    <div id="pn-vs" class="vs-banner"></div>
+    <div class="controls">
+      <label>自キャラ（反撃する側）
+        <select id="pn-self"></select>
+      </label>
+      <label>相手キャラ（ガードした技）
+        <select id="pn-opp"></select>
+      </label>
+      <input type="search" id="pn-search" placeholder="相手の技名で検索">
+      <label class="chk"><input type="checkbox" id="pn-small"> 猶予3F以下も表示</label>
+      <label class="chk"><input type="checkbox" id="pn-bo"> 自分バーンアウト中（猶予−4F）</label>
+    </div>
+    <p class="note">⚠ フレーム上の理論値です（発生 ≦ 相手のガード硬直差）。距離・押し合い・リーチは考慮していません。ガード後に届くかはトレモで確認してください。</p>
+    <div id="pn-list"></div>
+  </section>
+</main>
+
+<footer>
+  <p>データ出典: <a href="https://github.com/D4RKONION/FAT" target="_blank" rel="noopener">FAT - Frame Assistant Tool</a> (GPL-3.0) ｜ 更新: <span id="meta-updated"></span> ｜ 更新方法: <code>py scripts/fetch_framedata.py</code></p>
+</footer>
+
+<script src="data/framedata.js?v=3"></script>
+<script src="app.js?v=3"></script>
+</body>
+</html>
