@@ -87,6 +87,59 @@ input[type="search"] { min-width: 220px; align-self: flex-end; }
 
 .chips { display: flex; flex-wrap: wrap; gap: 6px; align-self: flex-end; }
 
+/* キャラクター選択（アイコンピッカー） */
+.char-picker { position: relative; }
+.cp-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg3);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--fg);
+  padding: 4px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  min-width: 190px;
+}
+.cp-button:hover { border-color: var(--accent); }
+.cp-current-icon { width: 32px; height: 32px; }
+.cp-caret { margin-left: auto; color: var(--fg-dim); font-size: 11px; }
+
+.cp-pop {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  width: 440px;
+  max-width: min(92vw, 440px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+}
+.cp-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 4px 2px;
+  cursor: pointer;
+  color: var(--fg-dim);
+  font-size: 10px;
+}
+.cp-item:hover { background: var(--bg3); color: var(--fg); }
+.cp-item.active { border-color: var(--accent); background: var(--bg3); color: var(--fg); }
+.cp-item-icon { width: 52px; height: 52px; }
+.cp-item-name { max-width: 64px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 .chk {
   flex-direction: row !important;
   align-items: center;

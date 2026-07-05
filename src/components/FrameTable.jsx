@@ -4,7 +4,7 @@ import { usePersistedState } from "../hooks/usePersistedState";
 import { CAT_GROUPS, groupLabel, lvlLabel, xxLabel } from "../i18n/strings";
 import { useLanguage } from "../i18n/LanguageContext";
 import CharIcon from "./CharIcon";
-import CharSelect from "./CharSelect";
+import CharPicker from "./CharPicker";
 import { CatBadge, FrameValue, MoveName } from "./MoveCells";
 
 const COL_KEYS = [
@@ -66,7 +66,7 @@ export default function FrameTable() {
       <div className="controls">
         <label>
           {t("charLabel")}
-          <CharSelect id="fd-char" value={c} onChange={setChar} />
+          <CharPicker id="fd-char" value={c} onChange={setChar} />
         </label>
         <input
           type="search"

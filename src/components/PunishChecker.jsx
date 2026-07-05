@@ -4,7 +4,7 @@ import { CHARS, CHAR_NAMES, charDisplayName, fastestPunisher } from "../data/sha
 import { usePersistedBool, usePersistedState } from "../hooks/usePersistedState";
 import { countText } from "../i18n/strings";
 import { useLanguage } from "../i18n/LanguageContext";
-import CharSelect from "./CharSelect";
+import CharPicker from "./CharPicker";
 import PunishAccordionItem from "./PunishAccordionItem";
 import VsBanner from "./VsBanner";
 
@@ -40,11 +40,11 @@ export default function PunishChecker() {
       <div className="controls">
         <label>
           {t("selfLabel")}
-          <CharSelect id="pn-self" value={selfC} onChange={setSelf} />
+          <CharPicker id="pn-self" value={selfC} onChange={setSelf} />
         </label>
         <label>
           {t("oppLabel")}
-          <CharSelect id="pn-opp" value={oppC} onChange={setOpp} />
+          <CharPicker id="pn-opp" value={oppC} onChange={setOpp} />
         </label>
         <input
           type="search"
