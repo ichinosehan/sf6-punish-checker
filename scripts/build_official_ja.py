@@ -56,10 +56,10 @@ STR_BTN = {"icon_punch_l": "LP", "icon_punch_m": "MP", "icon_punch_h": "HP",
 # 公式名の先頭に付く強度・状態の接頭辞（ベース名を得るため除去する）
 PREFIX_RE = re.compile(
     r"^(?:\[[^\]]+\]\s*)?"           # [電刃錬気] など
-    r"(?:(?:SA[123]|CA)\s+)?"        # SA1 / CA
+    r"(?:(?:SA[123]|CA)\s*)?"        # SA1 / CA（スペースなし表記もある）
     r"(?:(?:弱|中|強|OD|空中)\s*)*"   # 強度・空中（複数可）
 )
-SUFFIX_RE = re.compile(r"（(?:Lv[123]|ホールド|チャージ|ためなし|溜めなし)）\s*$")
+SUFFIX_RE = re.compile(r"(?:（(?:Lv[123]|ホールド|チャージ|ためなし|溜めなし)）|\(Lv[123]\))\s*$")
 
 
 def strip_tags(s):
@@ -110,7 +110,7 @@ def eng_base(n):
     # スクリプト側の接尾辞ハンドラが （ホールド）等を後付けする。
     while True:
         m = re.match(r"^(.*\S)\s*\((?:hold|stock|stocks|air|enhanced|charged|"
-                     r"charge|bomb|\d+ stocks?|\d+ stock)\)$", n)
+                     r"charge|bomb|Critical Art|\d+ stocks?|\d+ stock)\)$", n)
         if not m:
             break
         n = m.group(1).strip()
@@ -131,6 +131,10 @@ SKIP_BASE = {
     ("Alex", "Collapsing Driver"),      # 4MK(back turn) が オブリークスタンプ と衝突
     ("C.Viper", "Thunder Dash"),        # 別技2つが同名に collapse（衝突疑い）
     ("C.Viper", "Tracer Combination"),
+    # 電刃状態のSA。公式は「[電刃錬気]SA1 真空波動拳」形式で技名自体は同じだが、
+    # 一覧で区別できるよう手動の「～（電刃錬気）」名を維持する。
+    ("Ryu", "Denjin Hadoken"),
+    ("Ryu", "Denjin Hashogeki"),
     # ターゲットコンボ/移動技が特殊技のコマンドに衝突（逆引きで別技と重複）
     ("Kimberly", "Step Up (neutral hop)"),
     ("Kimberly", "Step Up (forward hop)"),
@@ -167,6 +171,24 @@ def main():
             bases = {base_name(n) for n in names if not AMBIG_RE.search(n)}
             if len(bases) == 1:
                 off_by_cmd[key] = next(iter(bases))
+        # SA: 強度なしボタン(P/K)なので「方向列＋P/K種別」でキー化。
+        # 同キーの表記ゆれ（強化版 例: 武神乱拍子・雷譜）は最短の共通ベースに寄せる。
+        sa_sets = {}
+        sa_air_keys = set()  # 公式に「空中～」行があるキー（空中版SAを持つ技）
+        for section, name, dirs, sb, imgs in rows:
+            if section != "sa" or not dirs:
+                continue
+            cls = ("P" if any(i.startswith("icon_punch") for i in imgs)
+                   else "K" if any(i.startswith("icon_kick") for i in imgs) else None)
+            if cls:
+                sa_sets.setdefault(dirs + cls, set()).add(base_name(name))
+                if "空中" in name:
+                    sa_air_keys.add(dirs + cls)
+        sa_by_cmd = {}
+        for key, bases in sa_sets.items():
+            shortest = min(bases, key=len)
+            if all(b.startswith(shortest) for b in bases):
+                sa_by_cmd[key] = shortest
         # FAT技（必殺/SA/特殊のみ）と突き合わせ
         eng2jp = {}
         for m in frame["chars"][char]["moves"]:
@@ -184,6 +206,26 @@ def main():
                 if jb and eb:
                     eng2jp.setdefault(eb, {}).setdefault(jb, 0)
                     eng2jp[eb][jb] += 1
+        # SA（cat=super）を「方向列＋P/K種別」で照合
+        for m in frame["chars"][char]["moves"]:
+            if m["cat"] != "super":
+                continue
+            if ">" in m["i"]:  # 追加入力・派生（ツインゲイザー等）は名前が別なので対象外
+                continue
+            mm = re.match(r"^(\d+)\s*(?:\[?[LMH]?\]?)?([PK])", fat_canon(m["i"]))
+            if not mm:
+                continue
+            key = mm.group(1) + mm.group(2)
+            if key not in sa_by_cmd:
+                continue
+            eb, jb = eng_base(m["n"]), sa_by_cmd[key]
+            if (char, eb) in SKIP_BASE or " > " in eb:
+                continue
+            # 公式に空中版の行がある技だけ、Aerial/Air/Soaring ～ に「空中」を戻す
+            if key in sa_air_keys and re.match(r"^(Aerial|Air|Soaring)\s", eb):
+                jb = "空中" + jb
+            eng2jp.setdefault(eb, {}).setdefault(jb, 0)
+            eng2jp[eb][jb] += 1
         # 1英語ベースが複数公式ベースに割れる＝衝突。除外。
         base_map = {eb: next(iter(c)) for eb, c in eng2jp.items() if len(c) == 1}
         result[char] = {"base": base_map, "nick": nick}
