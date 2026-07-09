@@ -6,10 +6,15 @@ import { guardLabel, noPunishText, windowLabel } from "../i18n/strings";
 import { useLanguage } from "../i18n/LanguageContext";
 import { CatBadge, FrameValue, MoveName } from "./MoveCells";
 
-export default function PunishAccordionItem({ m, self, window: w, boActive, note, onNote }) {
+export default function PunishAccordionItem({ m, self, window: w, boActive, note, onNote, starOnly }) {
   const { t, lang } = useLanguage();
   const [open, setOpen] = useState(false);
-  const list = open ? punishersFor(self, w) : null;
+  let list = open ? punishersFor(self, w) : null;
+  // ★のみ表示中は候補テーブルも採用技だけに絞る（猶予変化で★技が消えた時は全件に戻す）
+  if (list && starOnly && note?.pick) {
+    const only = list.filter((x) => moveId(x) === note.pick);
+    if (only.length) list = only;
+  }
   const picked = note?.pick
     ? CHARS[self].moves.find((x) => moveId(x) === note.pick)
     : null;

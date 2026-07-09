@@ -97,6 +97,7 @@ export default function PunishChecker() {
                   boActive={boActive}
                   note={notes[nk]}
                   onNote={(n) => updateNote(nk, n)}
+                  starOnly={starOnly}
                 />
               </motion.div>
             );
