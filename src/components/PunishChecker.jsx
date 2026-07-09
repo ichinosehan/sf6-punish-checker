@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import { CHARS, CHAR_NAMES, charDisplayName, fastestPunisher } from "../data/shared";
 import { usePersistedBool, usePersistedState } from "../hooks/usePersistedState";
+import { noteKey, usePunishNotes } from "../hooks/usePunishNotes";
 import { countText } from "../i18n/strings";
 import { useLanguage } from "../i18n/LanguageContext";
 import CharPicker from "./CharPicker";
@@ -15,6 +16,8 @@ export default function PunishChecker() {
   const [search, setSearch] = useState("");
   const [showSmall, setShowSmall] = usePersistedBool("sf6.pnSmall", false);
   const [boActive, setBoActive] = usePersistedBool("sf6.pnBo", false);
+  const [starOnly, setStarOnly] = usePersistedBool("sf6.pnStarOnly", false);
+  const [notes, updateNote] = usePunishNotes();
 
   const oppC = CHARS[opp] ? opp : CHAR_NAMES[0];
   const selfC = CHARS[self] ? self : CHAR_NAMES[1];
@@ -26,9 +29,10 @@ export default function PunishChecker() {
       .filter((m) => m.ob !== null && m.ob < 0)
       .filter((m) => m.cat !== "taunt" && !m.n.startsWith("Drive Impact"))
       .filter((m) => showSmall || -m.ob - boPenalty > 3)
+      .filter((m) => !starOnly || notes[noteKey(selfC, oppC, m)]?.pick)
       .filter((m) => !q || (m.n + " " + (m.j || "") + " " + m.i).toLowerCase().includes(q))
       .sort((a, b) => b.ob - a.ob); // 不利が小さい順（大幅マイナスは自明なので後ろへ）
-  }, [oppC, search, showSmall, boPenalty]);
+  }, [oppC, selfC, search, showSmall, boPenalty, starOnly, notes]);
 
   const fastest = useMemo(() => fastestPunisher(selfC), [selfC]);
   const withPunish = targets.filter((m) => -m.ob - boPenalty >= fastest).length;
@@ -60,6 +64,10 @@ export default function PunishChecker() {
           <input type="checkbox" checked={boActive} onChange={(e) => setBoActive(e.target.checked)} />
           {t("boActive")}
         </label>
+        <label className="chk">
+          <input type="checkbox" checked={starOnly} onChange={(e) => setStarOnly(e.target.checked)} />
+          {t("showStarred")}
+        </label>
       </div>
 
       <p className="note">{t("note")}</p>
@@ -72,6 +80,7 @@ export default function PunishChecker() {
         <AnimatePresence initial={false}>
           {targets.map((m) => {
             const w = Math.max(-m.ob - boPenalty, 0);
+            const nk = noteKey(selfC, oppC, m);
             return (
               <motion.div
                 key={m.n + m.i}
@@ -81,7 +90,14 @@ export default function PunishChecker() {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15 }}
               >
-                <PunishAccordionItem m={m} self={selfC} window={w} boActive={boActive} />
+                <PunishAccordionItem
+                  m={m}
+                  self={selfC}
+                  window={w}
+                  boActive={boActive}
+                  note={notes[nk]}
+                  onNote={(n) => updateNote(nk, n)}
+                />
               </motion.div>
             );
           })}

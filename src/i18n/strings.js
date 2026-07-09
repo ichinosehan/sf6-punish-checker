@@ -53,6 +53,14 @@ export const UI = {
 
   exact: { ja: "ぴったり", en: "Exact" },
 
+  showStarred: { ja: "★のみ表示", en: "Starred only" },
+  pickTitle: { ja: "この技を確反に採用（★）", en: "Set as my punish (★)" },
+  comboLabel: { ja: "コンボメモ", en: "Combo memo" },
+  comboPh: {
+    ja: "例: 弱昇龍拳 > SA3 ／ 画面端はOD波動〆",
+    en: "e.g. LP DP > SA3 / OD fireball ender in corner",
+  },
+
   langJa: { ja: "日本語", en: "日本語" },
   langEn: { ja: "English", en: "English" },
 };

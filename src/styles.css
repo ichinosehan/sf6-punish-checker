@@ -283,6 +283,46 @@ tbody tr:hover { background: var(--bg2); }
 
 .count { color: var(--fg-dim); font-size: 12px; margin: 8px 2px; }
 
+/* 確反の採用マーク（★）とコンボメモ */
+.pn-pick {
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+.star-btn {
+  background: none;
+  border: none;
+  color: var(--line);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0 4px;
+  line-height: 1;
+}
+.star-btn:hover { color: var(--gold); }
+.star-btn.on { color: var(--gold); text-shadow: 0 0 8px rgba(255, 213, 79, .55); }
+tr.starred td { background: rgba(255, 213, 79, .08); }
+tr.starred td:first-child { border-left: 2px solid var(--gold); }
+
+.combo-memo { display: flex; flex-direction: column; gap: 4px; margin-top: 10px; }
+.combo-memo label { font-size: 11px; color: var(--gold); font-weight: 600; }
+.combo-memo textarea {
+  background: var(--bg3);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--fg);
+  padding: 7px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 36px;
+}
+.combo-memo textarea:focus { border-color: var(--gold); outline: none; }
+
 footer {
   padding: 14px 20px 24px;
   color: var(--fg-dim);
